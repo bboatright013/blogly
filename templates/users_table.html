@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{%block title%} Users Table {% endblock %}
+
+{% block main%}
+<table>
+    {% for user in users %}
+    <tr>
+        {% if user.image_url %}
+        <td> <img src="{{user.image_url}}"></td>
+        {% endif %}
+        <td> {{user.id }}</td>
+        <td> {{user.first_name}} {{user.last_name}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
