@@ -1,0 +1,15 @@
+td img {
+    width: 100px;
+    height: 100px;
+}
+
+
+
+.profile-picture {
+    float: left;
+    width: 20%;
+}
+
+.profile-picture img {
+    max-width: 100%;
+}
