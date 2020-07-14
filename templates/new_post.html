@@ -1,0 +1,22 @@
+{% extends 'base.html'%}
+
+{%block title%} Add New Post {% endblock %}
+
+{% block main%}
+
+<form method="POST">
+    <div> <label for="titleBox">Title:</label>    <input type="text" id="titleBox" name="title"></div>
+    <div>
+        <label for="contentBox"> Content: </label>
+        <textarea id="contentBox" name="content" rows="10" cols="50"></textarea>
+    </div>
+    <div class="tags-list">
+      {% for tag in tags %}
+      <span class="tag-list"><input type="checkbox" name="tag_keys" value="{{tag.id}}">{{tag.name}}</span>
+      {% endfor %}
+    </div>
+    <button>Post</button>
+  </form>
+    <a href="/users/{{user.id}}"><button>Cancel</button></a>
+
+{% endblock %}

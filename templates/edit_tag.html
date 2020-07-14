@@ -1,0 +1,19 @@
+{% extends 'base.html'%}
+
+{%block title%} Tags List {% endblock %}
+
+{% block main%}
+<h2>Edit a tag</h2>
+<section>
+<form method="POST">
+    <label for="tagname"> Name: </label>
+    <input type="text" id="tagname" name="editname" value="{{tag.name}}">
+    <a href="/tags/{{tag.id}}/edit"><button>Update</button></a>
+
+</form>
+</section>
+<a href="/tags/{{tag.id}}"><button>Cancel</button></a>
+<a href="/tags/"><button>tag list</button></a>
+
+
+{% endblock %}

@@ -1,7 +1,7 @@
 """Blogly application."""
 
 from flask import Flask, request, redirect, render_template
-from models import db, connect_db, User
+from models import db, connect_db, User, Post, Tag, PostTag
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
@@ -43,7 +43,8 @@ def add_user():
 @app.route('/users/<int:user_id>', methods=("POST","GET"))
 def user_detail(user_id):
     user = User.query.get_or_404(user_id)
-    return render_template("details.html", user=user)
+    posts = Post.query.filter_by(user_id=user.id).all()
+    return render_template("details.html", user=user, posts=posts)
 
 
 @app.route('/users/<int:user_id>/edit', methods=('POST', 'GET'))
@@ -69,3 +70,115 @@ def delete(user_id):
     db.session.delete(user)
     db.session.commit()
     return redirect('/users')
+
+@app.route('/users/<int:user_id>/posts/new', methods=('POST','GET'))
+def new_post(user_id):
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        tag_keys = request.form.getlist('tag_keys')
+
+        post = Post(title=title, content=content, user_id=user_id)
+        for key in tag_keys:
+            tag = Tag.query.get(key)
+            post.tags.append(tag)
+        db.session.add(post)
+        db.session.commit()
+        return redirect(f'/users/{user_id}')
+    else:
+        user = User.query.get_or_404(user_id)
+        tags = Tag.query.all()
+        return render_template("new_post.html", user=user, tags=tags)
+
+@app.route('/posts/<int:post_id>')
+def read_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    user = User.query.get_or_404(post.user_id)
+    return render_template('detail_post.html', post=post, user=user)
+
+@app.route('/posts/<int:post_id>/edit', methods=('POST','GET'))
+def edit_post(post_id):
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        tag_keys = request.form.getlist('tag_keys')
+        
+        post = Post.query.get(post_id)
+        post.title = title
+        post.content = content
+        deleteTags = PostTag.query.filter_by(post_id=post.id)
+        for dltg in deleteTags:
+            db.session.delete(dltg)
+        for key in tag_keys:
+            tag = Tag.query.get(key)
+            post.tags.append(tag)
+        db.session.commit()
+        return redirect(f'/posts/{post.id}')
+    else:
+        post = Post.query.get_or_404(post_id)
+        tags = Tag.query.all()
+        return render_template("edit_post.html", post=post, tags=tags)
+
+
+@app.route('/posts/<int:post_id>/delete', methods=['POST','GET'])
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    user_address = post.user_id
+    db.session.delete(post)
+    db.session.commit()
+    return redirect(f'/users/{user_address}')
+
+# GET /tags
+# Lists all tags, with links to the tag detail page.
+@app.route('/tags')
+def tags():
+    tags = Tag.query.all()
+    return render_template('tags.html', tags=tags)
+
+# GET /tags/[tag-id]
+# Show detail about a tag. Have links to edit form and to delete.
+@app.route('/tags/<int:tag_id>')
+def specific_tag(tag_id):
+    tag = Tag.query.get_or_404(tag_id)
+    return render_template('specific_tag.html', tag=tag)
+
+# GET /tags/new
+# Shows a form to add a new tag.
+# POST /tags/new
+# Process add form, adds tag, and redirect to tag list.
+@app.route('/tags/new', methods=('POST','GET'))
+def new_tag():
+    if request.method == 'POST':
+        tag_name = request.form['name']
+        tag = Tag(name=tag_name)
+        db.session.add(tag)
+        db.session.commit()
+        return redirect('/tags')
+    else:
+        return render_template('new_tag.html')
+
+
+# GET /tags/[tag-id]/edit
+# Show edit form for a tag.
+# POST /tags/[tag-id]/edit
+# Process edit form, edit tag, and redirects to the tags list.
+@app.route('/tags/<int:tag_id>/edit', methods=('POST','GET'))
+def edit_tag(tag_id):
+    if request.method == 'POST':
+        tag_name = request.form['editname']
+        tag = Tag.query.get(tag_id)
+        tag.name = tag_name
+        db.session.commit()
+        return redirect('/tags')
+    else:
+        tag = Tag.query.get(tag_id)
+        return render_template('edit_tag.html', tag=tag)
+
+# POST /tags/[tag-id]/delete
+# Delete a tag.
+@app.route('/tags/<int:tag_id>/delete', methods=('POST','GET'))
+def delete_tag(tag_id):
+    tag = Tag.query.get(tag_id)
+    db.session.delete(tag)
+    db.session.commit()
+    return redirect('/tags')

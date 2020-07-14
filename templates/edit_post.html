@@ -1,0 +1,28 @@
+{% extends 'base.html'%}
+
+{%block title%} Edit {{post.title}} {% endblock %}
+
+{% block main%}
+
+<form method="POST">
+    <div> <label for="titleBox">Title:</label>    <input type="text" id="titleBox" name="title" value="{{post.title}}"></div>
+    <div>
+        <label for="contentBox"> Content: </label>
+        <textarea id="contentBox" name="content" rows="10" cols="50">
+            {{post.content}}
+        </textarea>
+    </div>
+    <div class="tags-list">
+        {% for tag in tags %}
+        {% if tag in post.tags %}
+        <span class="tag-list"><input type="checkbox" name="tag_keys" value="{{tag.id}}" checked>{{tag.name}}</span>
+        {% else %}
+        <span class="tag-list"><input type="checkbox" name="tag_keys" value="{{tag.id}}">{{tag.name}}</span>
+        {% endif %}
+        {% endfor %}
+      </div>
+    <button>Confirm</button>
+  </form>
+    <a href="/users/{{post.user_id}}"><button>Cancel</button></a>
+
+{% endblock %}

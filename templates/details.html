@@ -12,7 +12,19 @@
         <button>Delete</button>
     </form>
     <a href="/"><button>Go Back</button></a>
+    <a href="/users/{{user.id}}/posts/new"><button>Post</button></a>
 
 </div>
+<section>
+    {% if posts %}
+    <ul>
+    {%for post in posts%}
+        <li>
+            <a href="/posts/{{post.id}}">{{post.title}}</a>
+        </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+</section>
 
 {% endblock %}
