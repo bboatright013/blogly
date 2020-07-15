@@ -19,11 +19,20 @@ db.create_all()
 
 @app.route('/')
 def root():
-    return redirect('/users')
+    posts = Post.query.order_by(Post.created_on.desc()).limit(3).all()
+    users = []
+    for post in posts:
+        user = User.query.get(post.user_id)
+        users.append(user)
+    return render_template('homepage.html', posts=posts, users=users)
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 @app.route('/users')
 def users():
-    users = User.query.all()
+    users = User.query.order_by(User.last_name).all()
     return render_template("users_table.html", users = users)
 
 @app.route('/users/new', methods=('POST', 'GET'))
@@ -128,54 +137,57 @@ def delete_post(post_id):
     db.session.commit()
     return redirect(f'/users/{user_address}')
 
-# GET /tags
-# Lists all tags, with links to the tag detail page.
 @app.route('/tags')
 def tags():
     tags = Tag.query.all()
     return render_template('tags.html', tags=tags)
 
-# GET /tags/[tag-id]
-# Show detail about a tag. Have links to edit form and to delete.
+
 @app.route('/tags/<int:tag_id>')
 def specific_tag(tag_id):
     tag = Tag.query.get_or_404(tag_id)
     return render_template('specific_tag.html', tag=tag)
 
-# GET /tags/new
-# Shows a form to add a new tag.
-# POST /tags/new
-# Process add form, adds tag, and redirect to tag list.
 @app.route('/tags/new', methods=('POST','GET'))
 def new_tag():
     if request.method == 'POST':
         tag_name = request.form['name']
+        post_keys = request.form.getlist('post_keys')
         tag = Tag(name=tag_name)
+
+        for key in post_keys:
+            post = Post.query.get(key)
+            tag.posts.append(post)
         db.session.add(tag)
         db.session.commit()
         return redirect('/tags')
     else:
-        return render_template('new_tag.html')
+        posts = Post.query.all()
+        return render_template('new_tag.html', posts=posts)
 
 
-# GET /tags/[tag-id]/edit
-# Show edit form for a tag.
-# POST /tags/[tag-id]/edit
-# Process edit form, edit tag, and redirects to the tags list.
 @app.route('/tags/<int:tag_id>/edit', methods=('POST','GET'))
 def edit_tag(tag_id):
     if request.method == 'POST':
         tag_name = request.form['editname']
         tag = Tag.query.get(tag_id)
         tag.name = tag_name
+        post_keys = request.form.getlist('post_keys')
+        deletePost = PostTag.query.filter_by(tag_id=tag.id)
+        for dltpost in deletePost:
+            db.session.delete(dltpost)
+        for key in post_keys:
+            post = Post.query.get(key)
+            tag.posts.append(tag)
+
         db.session.commit()
         return redirect('/tags')
     else:
         tag = Tag.query.get(tag_id)
-        return render_template('edit_tag.html', tag=tag)
+        posts = Post.query.all()
+        return render_template('edit_tag.html', tag=tag, posts=posts)
 
-# POST /tags/[tag-id]/delete
-# Delete a tag.
+
 @app.route('/tags/<int:tag_id>/delete', methods=('POST','GET'))
 def delete_tag(tag_id):
     tag = Tag.query.get(tag_id)

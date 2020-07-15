@@ -3,16 +3,16 @@
 {%block title%} Edit {{post.title}} {% endblock %}
 
 {% block main%}
-
-<form method="POST">
-    <div> <label for="titleBox">Title:</label>    <input type="text" id="titleBox" name="title" value="{{post.title}}"></div>
-    <div>
+<div class="container" style="margin:0 auto">
+<form method="POST" class="m-1">
+    <div class="m-1"> <label for="titleBox">Title:</label>    <input type="text" id="titleBox" name="title" value="{{post.title}}"></div>
+    <div class="m-1">
         <label for="contentBox"> Content: </label>
         <textarea id="contentBox" name="content" rows="10" cols="50">
             {{post.content}}
         </textarea>
     </div>
-    <div class="tags-list">
+    <div style="display:block" class="m-1">
         {% for tag in tags %}
         {% if tag in post.tags %}
         <span class="tag-list"><input type="checkbox" name="tag_keys" value="{{tag.id}}" checked>{{tag.name}}</span>
@@ -21,8 +21,8 @@
         {% endif %}
         {% endfor %}
       </div>
-    <button>Confirm</button>
+    <button class="btn bg-primary">Confirm</button>
   </form>
-    <a href="/users/{{post.user_id}}"><button>Cancel</button></a>
-
+    <a href="/users/{{post.user_id}}" class="m-1"><button class="btn bg-warning">Cancel</button></a>
+</div>
 {% endblock %}

@@ -3,17 +3,29 @@
 {%block title%} Tags List {% endblock %}
 
 {% block main%}
+<div class="container">
 <h2>Edit a tag</h2>
-<section>
-<form method="POST">
+
+<form method="POST" class="m-2">
+    <div class="m-2">
     <label for="tagname"> Name: </label>
     <input type="text" id="tagname" name="editname" value="{{tag.name}}">
-    <a href="/tags/{{tag.id}}/edit"><button>Update</button></a>
-
+    <a href="/tags/{{tag.id}}/edit"><button class="btn bg-primary">Update</button></a>
+    </div>
+    <div class="container">
+    <p>Add tag to posts...</p>
+    {% for post in posts %}
+    {% if post in tag.posts %}
+    <span style="display:block"><input type="checkbox" name="post_keys" value="{{post.id}}" checked>{{post.title}}</span>
+    {% else %}
+    <span style="display:block"><input type="checkbox" name="post_keys" value="{{post.id}}">{{post.title}}</span>
+    {% endif %}
+    {% endfor %}
+    </div>
 </form>
-</section>
-<a href="/tags/{{tag.id}}"><button>Cancel</button></a>
-<a href="/tags/"><button>tag list</button></a>
 
+<a href="/tags/{{tag.id}}"><button class="btn bg-warning">Cancel</button></a>
+<a href="/tags"><button class="btn bg-info">tag list</button></a>
 
+</div>
 {% endblock %}

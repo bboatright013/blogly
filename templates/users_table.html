@@ -2,21 +2,32 @@
 {%block title%} Users Table {% endblock %}
 
 {% block main%}
-<table>
-    {% for user in users %}
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <th scope="col">Profile Pic</th>
+        <th scope="col">Name</th>
+    </thead>
+    <tbody>
+        {% for user in users %}
 
-            {% if user.image_url %}
-            <td> <img src="{{user.image_url}}"></td>
-            {% endif %}
-            <td> {{user.id }}</td>
-            <td><a href="/users/{{user.id}}"> {{user.first_name}} {{user.last_name}}</a></td>
-        </tr>
-    {% endfor %}
+    <tr>
+        {% if user.image_url %}
+        <td> <img style="max-width:100%" src="{{user.image_url}}"></td>
+        {% endif %}
+        <td><a href="/users/{{user.id}}"> {{user.first_name}} {{user.last_name}}</a></td>
+    </tr>
+
+        {% endfor %}
+    </tbody>
+
 </table>
 
+<div class="btn-group">
+    <a href="/users/new"><button class="btn bg-primary m-1">Add User</button></a>
+    <a href="/tags/new"><button class="btn bg-success m-1">Add Tag</button></a>
+    <a href="/"><button class="btn bg-warning m-1">Go Home</button></a>
+</div>
 
-    <a href="/users/new"><button>Add User</button></a>
-    <a href="/tags/new"><button>Add Tag</button></a>
 
 
 

@@ -4,15 +4,20 @@
 
 {% block main%}
 
-<section>
+<div class="container">
+    <h3>Tags</h3>
 {% if tags %}
-<ul>
+<ul class="m-2">
     {%for tag in tags %}
         <li><a href="/tags/{{tag.id}}">{{tag.name}}</a></li>
     {% endfor %}
 </ul>
 {% endif %}
-</section>
-<a href="/tags/new"><button>Add Tag</button></a>
+<a href="/tags/new"><button class="btn bg-primary">Add Tag</button></a>
+<a href="/tags"><button class="btn bg-warning">Cancel</button></a>
+<a href="/"><button class="btn bg-info">Home</button></a>
+
+
+</div>
 
 {% endblock %}

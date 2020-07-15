@@ -2,29 +2,31 @@
 {% block title%} User Details {% endblock %}
 
 {%block main%}
-<div class="profile-picture">
-    <img src="{{user.image_url}}">
-</div>
-<h1>{{ user.first_name }} {{user.last_name}}</h1>
-<div class="button-bar">
-    <a href="/users/{{user.id}}/edit"><button>Edit</button></a>
-    <form method="POST" action="/users/{{user.id}}/delete"> 
-        <button>Delete</button>
-    </form>
-    <a href="/"><button>Go Back</button></a>
-    <a href="/users/{{user.id}}/posts/new"><button>Post</button></a>
+<div class="card">
+    <img src="{{user.image_url}}" class="card-image-top" style="width:10rem;">
+<div class="card-body">
+<h3 class="card-title">{{ user.first_name }} {{user.last_name}}</h3>
 
-</div>
-<section>
+    <a href="/users/{{user.id}}/edit"><button class="btn text-primary">Edit User</button></a>
+    <form method="POST" action="/users/{{user.id}}/delete"> 
+        <button class="btn text-danger">Delete User</button>
+    </form>
+
+        <a href="/"><button class="btn text-primary">Home</button></a><br>
+        <a href="/users/{{user.id}}/posts/new"><button class="btn text-primary">Add Post</button></a>
+    </div>
+
+
+
     {% if posts %}
-    <ul>
+    <ul class="list-group list-group-flush">
     {%for post in posts%}
-        <li>
+        <li class="list-group-item">
             <a href="/posts/{{post.id}}">{{post.title}}</a>
         </li>
     {% endfor %}
     </ul>
     {% endif %}
-</section>
+</div>
 
 {% endblock %}

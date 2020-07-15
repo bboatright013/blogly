@@ -1,0 +1,25 @@
+{% extends 'base.html'%}
+
+{%block title%}Blogly Home Page{% endblock %}
+
+{% block main%}
+<h2 class="m-4">Blogly</h2>
+<a class="m-2" href="/users"><button class="btn btn-primary">Go To Users</button></a>
+<h4 class="text-center"><em>recent posts...</em></h4>
+{% if posts %}
+<div class="container">
+{% for post in posts %}
+<h3 class="text-center">{{post.title}}</h3>
+<blockquote class="text-center">
+    <p>{{post.content}}</p>
+<footer class="blockquote-footer">By: {{post.users.full_name}} on {{post.friendly_date}}</footer>
+{% for tag in post.tags%}
+<span class="alert alert-success m-1 p-1">{{tag.name}}</span>
+    {% endfor %}
+</blockquote>
+
+
+{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

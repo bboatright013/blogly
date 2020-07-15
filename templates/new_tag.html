@@ -3,15 +3,21 @@
 {%block title%} Tags List {% endblock %}
 
 {% block main%}
+<div class="container">
 <h2>Create a tag</h2>
-<section>
+
 <form method="POST">
     <label for="tagname"> Name: </label>
     <input type="text" id="tagname" name="name">
-    <a href="/tags/new"><button>Add</button></a>
-
+    <a href="/tags/new"><button class="btn bg-primary p-2 m-1">Add</button></a>
+    <div class="container">
+      <p>Add tag to active posts...</p>
+        {% for post in posts %}
+        <div class="m-1"><input type="checkbox" name="post_keys" value="{{post.id}}">  {{post.title}}</div>
+        {% endfor %}
+      </div>
 </form>
-</section>
-<a href="/tags"><button>Cancel</button></a>
 
+<a href="/tags"><button class="btn bg-info">Cancel</button></a>
+</div>
 {% endblock %}

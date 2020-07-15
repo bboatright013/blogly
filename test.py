@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from app import app
-from models import db, User, Post
+from models import db, User, Post, Tag, PostTag
 
 # Use test database and don't clutter tests with SQL
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly_test'
@@ -19,6 +19,8 @@ db.create_all()
 class BloglyTests(TestCase):
     def setUp(self):
         """Add sample user."""
+        PostTag.query.delete()
+        Tag.query.delete()
         Post.query.delete()
         User.query.delete()
 
@@ -27,10 +29,17 @@ class BloglyTests(TestCase):
         db.session.add(user)
         db.session.commit()
         post = Post(title="title", content="content", user_id=user.id)
+        tag = Tag(name="tag")
         db.session.add(post)
+        db.session.add(tag)
         db.session.commit()
+        
         self.user_id = user.id
         self.post_id = post.id
+        self.tag_id = tag.id
+        taggedpost = PostTag(post_id=post.id, tag_id=tag.id)
+        db.session.add(taggedpost)
+        db.session.commit()
 
     def tearDown(self):
         """Clean up any fouled transaction."""
@@ -103,4 +112,37 @@ class BloglyTests(TestCase):
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 302)
 
+    def test_tags(self):
+        with app.test_client() as client:
+            resp = client.get("/tags")
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('tags', html)
 
+    def test_specific_tag(self):
+        with app.test_client() as client:
+            resp = client.get(f"/tags/{self.tag_id}")
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('tag', html)
+
+    def test_new_tag(self):
+        with app.test_client() as client:
+            resp = client.get("/tags/new")
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+
+
+    def test_edit_tag(self):
+        with app.test_client() as client:
+            resp = client.get(f"/tags/{self.tag_id}/edit")
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('tag', html)
+
+
+    def test_delete_tag(self):
+        with app.test_client() as client:
+            resp = client.get(f"/tags/{self.tag_id}/delete")
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 302)

@@ -3,16 +3,16 @@
 {%block title %} {{tag.name}} Details {% endblock %}
 
 {% block main%}
-
+<div class="container">
 <h2>{{tag.name}}</h2>
 <ul>
 {% for post in tag.posts %}
 <li><a href='/posts/{{post.id}}'>{{post.title}}</a></li>
 {% endfor %}
 </ul>
-<a href="/tags/{{tag.id}}/edit"><button>edit</button></a>
-<a href="/tags/"><button>Back</button></a>
-<a href="/tags/{{tag.id}}/delete"><button>delete</button></a>
-
+<a href="/tags/{{tag.id}}/edit"><button class="btn bg-info">Edit</button></a>
+<a href="/tags"><button class="btn bg-info">Back</button></a>
+<a href="/tags/{{tag.id}}/delete"><button class="btn bg-danger">Delete</button></a>
+</div>
 
 {% endblock %}
